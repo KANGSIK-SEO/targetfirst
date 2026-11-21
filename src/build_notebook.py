@@ -43,7 +43,9 @@ import seaborn as sns
 
 from pipeline import DataAnalyzer
 
-plt.rcParams["figure.figsize"] = (8, 5)
+plt.rcParams["figure.figsize"] = (7, 4.3)
+plt.rcParams["figure.dpi"] = 80
+plt.rcParams["savefig.dpi"] = 80
 plt.rcParams["axes.unicode_minus"] = False
 sns.set_style("whitegrid")
 
@@ -114,7 +116,7 @@ da.products[["product_name", "category", "image_mean", "image_std",
 )
 
 code(
-"""fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+"""fig, axes = plt.subplots(1, 4, figsize=(10, 2.6))
 for i in range(4):
     axes[i].imshow(da.images[i])
     axes[i].set_title(f"{da.products.loc[i,'category']}\\nmean={da.products.loc[i,'image_mean']:.1f}")
@@ -175,7 +177,7 @@ outliers["category"].value_counts()
 code('capped_col = da.cap_outliers("price", threshold=1.5)\ncapped_col')
 
 code(
-"""fig, axes = plt.subplots(1, 2, figsize=(11, 5))
+"""fig, axes = plt.subplots(1, 2, figsize=(8, 3.6))
 sns.boxplot(y=da.products["price"], ax=axes[0], color="#ff8c69")
 axes[0].set_title("처리 전: price (원본)")
 axes[0].set_ylabel("price (원)")
@@ -217,8 +219,8 @@ corr
 )
 
 code(
-"""plt.figure(figsize=(7, 6))
-sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", center=0, square=True)
+"""plt.figure(figsize=(5.5, 4.6))
+sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm", center=0, square=True, annot_kws={"size": 7})
 plt.title("수치형 변수 상관행렬 (Heatmap)")
 plt.tight_layout()
 plt.show()
@@ -289,7 +291,7 @@ code(
 """tx["order_month"] = pd.to_datetime(tx["order_date"]).dt.to_period("M").dt.to_timestamp()
 monthly_sales = tx.groupby("order_month")["amount"].sum()
 
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(7, 4))
 monthly_sales.plot(marker="o", color="#c44e52")
 plt.title("월별 매출 추이 (Line Chart)")
 plt.xlabel("월")
@@ -352,8 +354,8 @@ plt.show()
 
 code(
 """pivot = rfm.pivot_table(index="R_score", columns="F_score", values="customer_id", aggfunc="count", fill_value=0)
-plt.figure(figsize=(6, 5))
-sns.heatmap(pivot, annot=True, fmt="d", cmap="YlGnBu")
+plt.figure(figsize=(5, 4))
+sns.heatmap(pivot, annot=True, fmt="d", cmap="YlGnBu", annot_kws={"size": 8})
 plt.title("R_score x F_score 고객 분포 (Heatmap)")
 plt.xlabel("F_score (구매 빈도)")
 plt.ylabel("R_score (최근성, 4=가장 최근)")
@@ -428,13 +430,14 @@ cohort_counts = tx2.groupby(["cohort_month", "period_number"])["customer_id"].nu
 cohort_size = cohort_counts.iloc[:, 0]
 retention = cohort_counts.divide(cohort_size, axis=0).round(3)
 retention.index = retention.index.astype(str)
-retention.iloc[:, :9]
+retention.iloc[:, :6]
 """
 )
 
 code(
-"""plt.figure(figsize=(11, 7))
-sns.heatmap(retention.iloc[:, :9], annot=True, fmt=".0%", cmap="Blues", vmin=0, vmax=1)
+"""plt.figure(figsize=(7, 4.5))
+sns.heatmap(retention.iloc[:, :6], annot=True, fmt=".0%", cmap="Blues", vmin=0, vmax=1,
+            annot_kws={"size": 7})
 plt.title("가입월 코호트별 재구매율 (Retention Heatmap)")
 plt.xlabel("가입 후 경과 월(Period)")
 plt.ylabel("가입월(Cohort)")
